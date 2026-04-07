@@ -22,7 +22,17 @@ void route_request(int client_fd, HttpRequest *req) {
             "Hello route working!";
 
         send(client_fd, response, strlen(response), 0);
-    }
+    }else if (strcmp(req->method, "POST") == 0 && strcmp(req->path, "/data") == 0) {
+
+    char response[4096];
+
+    sprintf(response,
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n\r\n"
+        "Received data: %s", req->body);
+
+    send(client_fd, response, strlen(response), 0);
+}
 
     else {
 
