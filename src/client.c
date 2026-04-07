@@ -1,22 +1,22 @@
 #include "client.h"
+#include "parser.h"
+#include "router.h"
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>
 
 void handle_client(int client_fd) {
     char buffer[4096] = {0};
 
     read(client_fd, buffer, sizeof(buffer));
 
-    printf("Request received:\n%s\n", buffer);
+    printf("Raw Request:\n%s\n", buffer);
 
-    char *response =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
-        "\r\n"
-        "Hello from modular C server!";
+    HttpRequest req;
+    parse_request(buffer, &req);
 
-    send(client_fd, response, strlen(response), 0);
+    printf("Method: %s, Path: %s\n", req.method, req.path);
+
+    route_request(client_fd, &req);
 
     close(client_fd);
 }
