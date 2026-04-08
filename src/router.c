@@ -7,7 +7,7 @@
 
 void route_request(int client_fd, HttpRequest *req)
 {
-    // 🔥 HOME → serve index.html
+    // HOME → serve index.html
     if (strcmp(req->method, "GET") == 0 && strcmp(req->path, "/") == 0)
     {
         char file_path[256];
@@ -15,7 +15,7 @@ void route_request(int client_fd, HttpRequest *req)
         serve_file(client_fd, file_path);
     }
 
-    // 🔥 HELLO ROUTE
+    // HELLO ROUTE
     else if (strcmp(req->method, "GET") == 0 && strcmp(req->path, "/hello") == 0)
     {
         char *response =
@@ -26,7 +26,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 GET DATA (READ DATABASE)
+    // GET DATA (READ DATABASE)
     else if (strcmp(req->method, "GET") == 0 && strcmp(req->path, "/data") == 0)
     {
         FILE *file = fopen("data.txt", "r");
@@ -49,10 +49,10 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 POST (CREATE)
+    // POST (CREATE)
     else if (strcmp(req->method, "POST") == 0 && strcmp(req->path, "/data") == 0)
     {
-        // ✅ validation
+        // validation
         if (strlen(req->body) == 0)
         {
             char *response =
@@ -78,7 +78,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 PATCH (UPDATE)
+    // PATCH (UPDATE)
     else if (strcmp(req->method, "PATCH") == 0 && strcmp(req->path, "/data") == 0)
     {
         FILE *file = fopen("data.txt", "w");
@@ -95,7 +95,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 DELETE (CLEAR)
+    // DELETE (CLEAR)
     else if (strcmp(req->method, "DELETE") == 0 && strcmp(req->path, "/data") == 0)
     {
         FILE *file = fopen("data.txt", "w");
@@ -107,7 +107,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 HEAD
+    // HEAD
     else if (strcmp(req->method, "HEAD") == 0)
     {
         char *response =
@@ -117,7 +117,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 STATIC FILES (KEEP LAST ALWAYS)
+    // STATIC FILES (KEEP LAST ALWAYS)
     else if (strcmp(req->method, "GET") == 0)
     {
         char file_path[256];
@@ -125,7 +125,7 @@ void route_request(int client_fd, HttpRequest *req)
         serve_file(client_fd, file_path);
     }
 
-    // 🔥 DEFAULT
+    // DEFAULT
     else
     {
         char *response =
