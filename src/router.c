@@ -7,7 +7,7 @@
 
 void route_request(int client_fd, HttpRequest *req)
 {
-    // 🔥 HOME
+    // 🔥 HOME → serve index.html
     if (strcmp(req->method, "GET") == 0 && strcmp(req->path, "/") == 0)
     {
         char file_path[256];
@@ -26,7 +26,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 GET DATA (DATABASE READ)
+    // 🔥 GET DATA (READ DATABASE)
     else if (strcmp(req->method, "GET") == 0 && strcmp(req->path, "/data") == 0)
     {
         FILE *file = fopen("data.txt", "r");
@@ -42,7 +42,8 @@ void route_request(int client_fd, HttpRequest *req)
 
         sprintf(response,
                 "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n\r\n%s",
+                "Content-Type: text/plain\r\n\r\n"
+                "Stored Data:\n%s",
                 buffer);
 
         send(client_fd, response, strlen(response), 0);
@@ -51,6 +52,16 @@ void route_request(int client_fd, HttpRequest *req)
     // 🔥 POST (CREATE)
     else if (strcmp(req->method, "POST") == 0 && strcmp(req->path, "/data") == 0)
     {
+        // ✅ validation
+        if (strlen(req->body) == 0)
+        {
+            char *response =
+                "HTTP/1.1 400 Bad Request\r\n\r\nEmpty body";
+
+            send(client_fd, response, strlen(response), 0);
+            return;
+        }
+
         FILE *file = fopen("data.txt", "a");
 
         if (file)
@@ -67,20 +78,6 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 DELETE (CLEAR)
-    else if (strcmp(req->method, "DELETE") == 0 && strcmp(req->path, "/data") == 0)
-    {
-        FILE *file = fopen("data.txt", "w");
-        if (file) fclose(file);
-
-        char *response =
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n\r\n"
-            "Data deleted successfully";
-
-        send(client_fd, response, strlen(response), 0);
-    }
-
     // 🔥 PATCH (UPDATE)
     else if (strcmp(req->method, "PATCH") == 0 && strcmp(req->path, "/data") == 0)
     {
@@ -92,12 +89,20 @@ void route_request(int client_fd, HttpRequest *req)
             fclose(file);
         }
 
-        char response[4096];
+        char *response =
+            "HTTP/1.1 200 OK\r\n\r\nData updated";
 
-        sprintf(response,
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n\r\n"
-                "Data updated");
+        send(client_fd, response, strlen(response), 0);
+    }
+
+    // 🔥 DELETE (CLEAR)
+    else if (strcmp(req->method, "DELETE") == 0 && strcmp(req->path, "/data") == 0)
+    {
+        FILE *file = fopen("data.txt", "w");
+        if (file) fclose(file);
+
+        char *response =
+            "HTTP/1.1 200 OK\r\n\r\nData deleted";
 
         send(client_fd, response, strlen(response), 0);
     }
@@ -112,7 +117,7 @@ void route_request(int client_fd, HttpRequest *req)
         send(client_fd, response, strlen(response), 0);
     }
 
-    // 🔥 STATIC FILES (KEEP LAST)
+    // 🔥 STATIC FILES (KEEP LAST ALWAYS)
     else if (strcmp(req->method, "GET") == 0)
     {
         char file_path[256];
