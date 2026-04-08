@@ -1,5 +1,6 @@
 #include "file_handler.h"
 #include "mime.h"
+#include<string.h>
 #include <stdio.h>
 #include <unistd.h>
 

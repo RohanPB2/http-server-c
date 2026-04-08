@@ -4,6 +4,7 @@
 #include "logger.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 void handle_client(int client_fd) {
     char buffer[4096] = {0};

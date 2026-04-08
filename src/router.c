@@ -1,7 +1,9 @@
 #include "router.h"
 #include "file_handler.h"
+#include<stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 void route_request(int client_fd, HttpRequest *req)
 {
